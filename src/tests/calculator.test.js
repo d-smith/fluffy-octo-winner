@@ -11,7 +11,7 @@
  *   2 + 3 = 5  |  10 - 4 = 6  |  45 * 2 = 90  |  20 / 5 = 4
  */
 
-const { add, subtract, multiply, divide, calculate } = require('../calculator');
+const { add, subtract, multiply, divide, modulo, power, squareRoot, calculate } = require('../calculator');
 
 // ─── Addition ────────────────────────────────────────────────────────────────
 describe('add()', () => {
@@ -65,10 +65,50 @@ describe('calculate()', () => {
   test('dispatches subtraction',    () => expect(calculate(10, '-', 4)).toBe(6));
   test('dispatches multiplication', () => expect(calculate(45, '*', 2)).toBe(90));
   test('dispatches division',       () => expect(calculate(20, '/', 5)).toBe(4));
+  test('dispatches modulo',         () => expect(calculate(10, '%', 3)).toBe(1));
+  test('dispatches power',          () => expect(calculate(2, '**', 8)).toBe(256));
   test('throws on unsupported operator', () => {
     expect(() => calculate(1, '^', 2)).toThrow('Unsupported operator');
   });
   test('propagates division by zero error', () => {
     expect(() => calculate(5, '/', 0)).toThrow('Division by zero is not allowed');
+  });
+});
+
+// ─── Modulo ──────────────────────────────────────────────────────────────────
+describe('modulo()', () => {
+  test('image example: 5 % 2 = 1',  () => expect(modulo(5, 2)).toBe(1));
+  test('10 % 3 = 1',                () => expect(modulo(10, 3)).toBe(1));
+  test('even number % 2 = 0',       () => expect(modulo(8, 2)).toBe(0));
+  test('odd number % 2 = 1',        () => expect(modulo(7, 2)).toBe(1));
+  test('zero % n = 0',              () => expect(modulo(0, 5)).toBe(0));
+  test('negative dividend',         () => expect(modulo(-7, 3)).toBe(-1));
+  test('decimal numbers',           () => expect(modulo(5.5, 2)).toBeCloseTo(1.5));
+});
+
+// ─── Power ───────────────────────────────────────────────────────────────────
+describe('power()', () => {
+  test('image example: 2 ^ 3 = 8',  () => expect(power(2, 3)).toBe(8));
+  test('2 ** 8 = 256',              () => expect(power(2, 8)).toBe(256));
+  test('any number ** 0 = 1',       () => expect(power(99, 0)).toBe(1));
+  test('any number ** 1 = self',    () => expect(power(7, 1)).toBe(7));
+  test('negative base even exp',    () => expect(power(-2, 2)).toBe(4));
+  test('negative base odd exp',     () => expect(power(-2, 3)).toBe(-8));
+  test('fractional exponent',       () => expect(power(9, 0.5)).toBeCloseTo(3));
+});
+
+// ─── Square Root ─────────────────────────────────────────────────────────────
+describe('squareRoot()', () => {
+  test('image example: √16 = 4',    () => expect(squareRoot(16)).toBe(4));
+  test('sqrt(9) = 3',               () => expect(squareRoot(9)).toBe(3));
+  test('sqrt(0) = 0',               () => expect(squareRoot(0)).toBe(0));
+  test('sqrt(1) = 1',               () => expect(squareRoot(1)).toBe(1));
+  test('sqrt(2) ≈ 1.414',           () => expect(squareRoot(2)).toBeCloseTo(1.414, 3));
+  test('sqrt(0.25) = 0.5',          () => expect(squareRoot(0.25)).toBe(0.5));
+  test('throws on negative input',  () => {
+    expect(() => squareRoot(-1)).toThrow('Square root of a negative number is not allowed');
+  });
+  test('throws on negative decimal', () => {
+    expect(() => squareRoot(-0.5)).toThrow('Square root of a negative number is not allowed');
   });
 });
